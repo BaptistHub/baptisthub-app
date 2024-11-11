@@ -1,0 +1,7 @@
+{
+    "editor.tokenColorCustomizations": {
+        "comments": "",
+        "textMateRules": []
+    },
+    "cmake.sourceDirectory": "/home/joel/Documents/apps/baptisthubapp/node_modules/expo-av/android"
+}
