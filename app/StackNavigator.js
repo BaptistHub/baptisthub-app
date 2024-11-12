@@ -6,9 +6,8 @@ import { AntDesign } from "@expo/vector-icons";
 import ProfileScreen from "./screens/ProfileScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import LoginScreen from "./screens/LoginScreen";
 import LikedSongsScreen from "./screens/LikedSongsScreen";
-import SongInfoScreen from "./screens/SongInfoScreen";
+import SermonsScreen from "./screens/SermonsScreen";
 import PlayerScreen from "./screens/PlayerScreen";
 import HistoryScreen from "./screens/HistoryScreen";
 import EntryPoint from "./screens/EntryPoint";
@@ -77,7 +76,7 @@ function Navigation(){
                 {/* <Stack.Screen name="Login" component={LoginScreen} options={{headerShown:false}}/> */}
                 <Stack.Screen name="Main" component={EntryPoint} options={{headerShown:false}}/>
                 <Stack.Screen name="Liked" component={LikedSongsScreen} options={{headerShown:false}}/> 
-                <Stack.Screen name="Info" component={SongInfoScreen} options={{headerShown:false}}/>
+                <Stack.Screen name="Info" component={SermonsScreen} options={{headerShown:false}}/>
                 <Stack.Screen name="Player" component={PlayerScreen} options={{headerShown:false}}/>
                 <Stack.Screen name="History" component={HistoryScreen} options={{headerShown:false}}/>
 

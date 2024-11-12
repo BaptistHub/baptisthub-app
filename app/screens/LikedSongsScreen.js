@@ -15,17 +15,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Feather, FontAwesome } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SongItem from "../components/SongItem";
+import LikedSermonCard from "../components/LikedSermonCard";
 import { Player } from "../PlayerContext";
-import { BottomModal } from "react-native-modals";
-import { ModalContent } from "react-native-modals";
-import { Audio } from "expo-av";
 import { debounce } from "lodash";
-import { likedSermons } from '../mockdata/LikedSongs'
+import { churchlist } from "../mockdata/churches";
+
 
 const LikedSongsScreen = () => {
   const colors = [
@@ -110,37 +105,16 @@ const LikedSongsScreen = () => {
             color="white"
         />
                 <Text
-          style={{
-            color: "white",
-            marginHorizontal: 12,
-            marginTop: 16,
-            fontSize: 22,
-            fontWeight: "bold",
-          }}
+          style={styles.songCountHeadingText}
         >
          Liked sermons
         </Text>
         </View>
           <Pressable
-            style={{
-              marginHorizontal: 10,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginTop: 9,
-            }}
+            style={styles.searchBarContainerStyle}
           >
             <Pressable
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 10,
-                backgroundColor: "#42275a",
-                padding: 9,
-                flex: 1,
-                borderRadius: 3,
-                height: 38,
-              }}
+              style={styles.searchBarStyle}
             >
               <AntDesign name="search1" size={20} color="white" />
               <TextInput
@@ -153,13 +127,7 @@ const LikedSongsScreen = () => {
             </Pressable>
 
             <Pressable
-              style={{
-                marginHorizontal: 10,
-                backgroundColor: "#42275a",
-                padding: 10,
-                borderRadius: 3,
-                height: 38,
-              }}
+              style={styles.sortBtnStyle}
             >
               <Text style={{ color: "white" }}>Sort</Text>
             </Pressable>
@@ -167,7 +135,7 @@ const LikedSongsScreen = () => {
 
           <View style={{ height: 50 }} />
           <View style={{ marginHorizontal: 10 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", color: "white" }}>
+            <Text style={styles.numOfSongsTextStyle}>
             {searchedTracks?.length ?? 0} songs
             </Text>
           </View>
@@ -181,9 +149,10 @@ const LikedSongsScreen = () => {
               showsVerticalScrollIndicator={false}
               data={searchedTracks}
               renderItem={({ item, index }) => (
-                <SongItem
+                <LikedSermonCard
                 key={index}
-                  item={item}
+                  info={item}
+                  logo={churchlist[item.church].logo}
                   onHeartPressed={unLikeSermon}
                   onPress={() => navigation.navigate(
                     "Player", {
@@ -206,4 +175,40 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "white",
   },
+  sortBtnStyle :{
+    marginHorizontal: 10,
+    backgroundColor: "#42275a",
+    padding: 10,
+    borderRadius: 3,
+    height: 38,
+  },
+  numOfSongsTextStyle : { 
+    fontSize: 18, 
+    fontWeight: "bold", 
+    color: "white" 
+  },
+  searchBarStyle : {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: "#42275a",
+    padding: 9,
+    flex: 1,
+    borderRadius: 3,
+    height: 38,
+  },
+  searchBarContainerStyle : {
+    marginHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 9,
+  },
+  songCountHeadingText : {
+    color: "white",
+    marginHorizontal: 12,
+    marginTop: 16,
+    fontSize: 22,
+    fontWeight: "bold",
+  }
 });

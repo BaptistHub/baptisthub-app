@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { churchlist } from '../mockdata/churches';
 import axios from "axios";
-import ArtistCard from "../components/ArtistCard";
+import ChannelCard from "../components/ChannelCard";
 import RecentlyPlayedCard from "../components/RecentlyPlayedCard";
 import { useNavigation } from "@react-navigation/native";
 import { Layout } from "react-native-reanimated";
@@ -139,13 +139,15 @@ const HomeScreen = () => {
 
         {/* church cards */}
         <FlatList
-          data={Object.keys(churchlist).map((item) => [item, churchlist[item]])}
+          data={Object.keys(churchlist)}
           numColumns={2}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
-            <ArtistCard item={item[1]} name={item[0]}
-            onPressed={() => navigation.navigate("Info", {church: item[0], info: item[1]})}
-            screenLayout={screenLayout.width} size={layout.width} key={index} />
+            <ChannelCard imageUrl={churchlist[item].logo} name={item}
+            onPressed={() => navigation.navigate("Info", {church: item, info: churchlist[item]})}
+            margin={
+              ((screenLayout.width/2)-layout.width)/2} 
+              size={layout.width} key={index} />
           )}
         />
 

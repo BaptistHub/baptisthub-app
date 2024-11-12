@@ -1,14 +1,12 @@
 import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React from "react";
 
-const ArtistCard = ({ item, name, size, screenLayout, onPressed }) => {
+const ChannelCard = ({ imageUrl, margin, name, size, onPressed }) => {
   // Extract the key and value from the item
-  const churchName = name;
-  const imageUrl = item.logo;
 
   return (
     <Pressable onPress={() => onPressed()}>
-    <View style={{ margin: (((screenLayout/2)-size))/2 }}>
+    <View style={{ margin: margin }}>
       <Image
         style={{ width: size, height: size, borderRadius: 5 }}
         source={{ uri: imageUrl }}
@@ -21,13 +19,13 @@ const ArtistCard = ({ item, name, size, screenLayout, onPressed }) => {
           marginTop: 10,
         }}
       >
-        {churchName}
+        {name}
       </Text>
     </View>
     </Pressable>
   );
 };
 
-export default ArtistCard;
+export default ChannelCard;
 
 const styles = StyleSheet.create({});

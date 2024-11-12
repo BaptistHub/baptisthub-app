@@ -1,21 +1,18 @@
 import { Image, TextInput,  FlatList, ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, DeviceEventEmitter } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
-import { SearchB } from "../components/SearchBar";
-import { Ionicons,AntDesign,MaterialCommunityIcons,Entypo } from "@expo/vector-icons";
-import {fwbcSermons} from '../mockdata/fwbcsermonds';
+import { Ionicons } from "@expo/vector-icons";
 import { debounce } from "lodash";
 import  SearchTopBar from "../components/SearchBar";
 import * as api from '../http/api';
-import { Audio } from 'expo-av';
+import ChruchSermonCard  from "../components/ChurchSermonCard";
 
-
-const SongInfoScreen = () => {
+const SermonsScreen = () => {
   const route = useRoute();
   const church = route?.params?.church;
   const churchInfo = route?.params?.info;
+  const logo = churchInfo.logo
   const [tracks, setTracks] = useState([]);
   const [layout, setLayout] = useState({width: 0,height: 0});
   const [isSearch, setIsSearch] = useState(false);
@@ -59,16 +56,16 @@ const SongInfoScreen = () => {
   return (
     <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
       {isSearch ? (<SearchTopBar onChange={handleInputChange} onNavBack={toggleSearch} / >) :  (<View 
-      style={{flexDirection:'row', alignItems: 'center', justifyContent: "space-between"}}>
+      style={styles.gradientStyle}>
          <Ionicons
             onPress={() => navigation.goBack()}
             name="arrow-back"
             size={24}
-            style={{paddingHorizontal: 16,paddingVertical: 20, marginLeft: 5}}
+            style={styles.topBarItems}
             color="white"
         />
         <Pressable onPress={toggleSearch}><Ionicons name="search-outline" 
-        style={{paddingHorizontal: 16,paddingVertical: 20, marginLeft: 5}}
+        style={styles.topBarItems}
         size={24} color="white" /></Pressable>
         </View>)}        
         <FlatList
@@ -80,7 +77,7 @@ const SongInfoScreen = () => {
                 <View style={{ flex: 1, alignItems: "center" }}>
                   <Image
                     style={{ width: 200, height: 200 }}
-                    source={{ uri: route?.params?.info?.logo }}
+                    source={{ uri: logo }}
                   />
                 </View>
                 <Text style={styles.church}>{church}</Text>
@@ -90,23 +87,13 @@ const SongInfoScreen = () => {
                 }
               </View>) : null
 
-            ) : (<Pressable 
+            ) : (<ChruchSermonCard 
               onPress={() => navigation.navigate(
                 "Player", {churchName: church, churchInfo: churchInfo, info: item})}
-              key={index} style={{
-              paddingVertical:10,
-              paddingHorizontal: 12,
-              flexDirection:"row",
-              justifyContent:"space-between"}}>
-              <View style={{flex: 1}}>
-                <Text numberOfLines={1} ellipsizeMode="tail"
-                style={{fontSize:16,fontWeight:"500",color:"white"}}>{item?.name}</Text>
-                <View style={{flexDirection:"row",alignItems:"center",gap:8,marginTop:5}}>
-                <Text style={{fontSize:16,fontWeight:"500",color:"gray"}}>{item?.pastor}</Text>
-                </View>
-              </View>
-               <Entypo name="dots-three-vertical" size={24} color="white" /> 
-          </Pressable>)
+              key={index}
+              info={item}
+            >
+          </ChruchSermonCard>)
           )}
         />
         <View>
@@ -115,7 +102,7 @@ const SongInfoScreen = () => {
   );
 };
 
-export default SongInfoScreen;
+export default SermonsScreen;
 
 const styles = StyleSheet.create({
   church: {
@@ -124,4 +111,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 8
   },
+  gradientStyle: {
+    flexDirection:'row',
+    alignItems: 'center', 
+    justifyContent: "space-between"
+  },
+  topBarItems : {
+    paddingHorizontal: 16,
+    paddingVertical: 20, 
+    marginLeft: 5
+  }
 });
