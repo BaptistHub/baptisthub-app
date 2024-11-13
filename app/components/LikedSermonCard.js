@@ -1,15 +1,27 @@
 import { StyleSheet, Text, View, Pressable, Image } from "react-native";
-import React ,{useContext} from  "react";
+import React ,{useContext, useState} from  "react";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { Player } from "../PlayerContext";
 import { churchlist } from '../mockdata/churches'
+import ContentInfoModal from "./ContentInfoModal";
 
 const LikedSermonCard = ({ info, onPress, logo, isPlaying, onHeartPressed }) => {
   const title = info?.name;
   const preacher = info?.pastor;
+  const [openModal, setOpenModal] = useState(false)
   const { currentTrack, setCurrentTrack } = useContext(Player);
+
+ function toggleModal() {
+    setOpenModal(!openModal);
+ }
+
   return (
+    <View>
+      <ContentInfoModal 
+        visible={openModal} Title={'Sermon'} info={info}
+        closeModal={toggleModal} onPlayPress={onPress}
+      ></ContentInfoModal>
     <Pressable
     onPress={onPress}
       style={styles.cardLayoutStyle}>
@@ -35,9 +47,12 @@ const LikedSermonCard = ({ info, onPress, logo, isPlaying, onHeartPressed }) => 
         <Pressable onPress={() => onHeartPressed(info)}>
           <AntDesign name="heart" size={24} color="#1DB954" />
         </Pressable>
-         <Entypo name="dots-three-vertical" size={24} color="#C0C0C0" /> 
+        <Pressable onPress={() => toggleModal()}>
+          <Entypo name="dots-three-vertical" size={24} color="#C0C0C0" /> 
+        </Pressable>
       </View>
     </Pressable>
+    </View>
   );
 };
 

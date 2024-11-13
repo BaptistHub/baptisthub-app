@@ -16,6 +16,7 @@ const SermonsScreen = () => {
   const [tracks, setTracks] = useState([]);
   const [layout, setLayout] = useState({width: 0,height: 0});
   const [isSearch, setIsSearch] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [searchedTracks, setSearchedTracks] = useState([]);
   const [input, setInput] = useState("");
   const navigation = useNavigation();
@@ -52,7 +53,6 @@ const SermonsScreen = () => {
     debouncedSearch(text);
   };
 
-
   return (
     <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
       {isSearch ? (<SearchTopBar onChange={handleInputChange} onNavBack={toggleSearch} / >) :  (<View 
@@ -88,8 +88,11 @@ const SermonsScreen = () => {
               </View>) : null
 
             ) : (<ChruchSermonCard 
-              onPress={() => navigation.navigate(
-                "Player", {churchName: church, churchInfo: churchInfo, info: item})}
+              onPress={() =>{ 
+                console.log("hello world");
+              navigation.navigate(
+                "Player", {churchName: church, churchInfo: churchInfo, info: item})
+              }}
               key={index}
               info={item}
             >

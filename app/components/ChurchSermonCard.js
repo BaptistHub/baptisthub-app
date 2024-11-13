@@ -1,32 +1,50 @@
 import { StyleSheet, Text, View, Pressable, Image } from "react-native";
-import React ,{useContext} from  "react";
+import React ,{useContext, useState} from  "react";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { Player } from "../PlayerContext";
+import ContentInfoModal from "./ContentInfoModal";
+import { useNavigation } from "@react-navigation/native";
 
 
-const ChruchSermonCard = ({ info, onPress, isPlaying }) => {
+const ChruchSermonCard = ({ info, onPress, moreInfoModal, isPlaying }) => {
   const title = info?.name;
   const preacher = info?.pastor;
+  const [openModal, setOpenModal] = useState(false);
+  const navigation = useNavigation();
+
   const { currentTrack, setCurrentTrack } = useContext(Player);
+
+ function toggleModal() {
+    setOpenModal(!openModal);
+ }
+
   return (
-    <Pressable
-    onPress={onPress}
-      style={styles.cardLayoutStyle}>
-      <View style={{ flex: 1 }}>
-        <Text
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          style={styles.titleStyle}
-        >
-          {title}
-        </Text>
-        <Text style={styles.infoTextStyle}>
-          {preacher}
-        </Text>
-      </View>
-        <Entypo name="dots-three-vertical" size={24} color="#C0C0C0" /> 
-    </Pressable>
+    <View>
+        <ContentInfoModal 
+            visible={openModal} Title={"Sermon"} info={info}
+            closeModal={toggleModal} onPlayPress={onPress}
+        ></ContentInfoModal>
+        <Pressable
+        onPress={onPress}
+        style={styles.cardLayoutStyle}>
+        <View style={{ flex: 1 }}>
+            <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.titleStyle}
+            >
+            {title}
+            </Text>
+            <Text style={styles.infoTextStyle}>
+            {preacher}
+            </Text>
+        </View>
+        <Pressable onPress={() => toggleModal()}>
+            <Entypo name="dots-three-vertical" size={24} color="#C0C0C0" /> 
+        </Pressable>
+        </Pressable>
+    </View>
   );
 };
 
