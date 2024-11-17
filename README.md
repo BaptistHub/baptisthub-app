@@ -14,7 +14,7 @@ The app is built using react native and Expo, learn more about Expo and how to d
 Here is a link to a 2 hour course on React Native and Expo -> https://www.youtube.com/watch?v=0-S5a0eXPoc
 
 ## Getting started
-This app can only be run in a custom dev client and not in exo go, due to the
+This app can only be run in a custom dev client and not in expo go, due to the
 react native library not being an expo package
 
 1. Install dependencies

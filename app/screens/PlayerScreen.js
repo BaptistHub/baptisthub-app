@@ -42,6 +42,7 @@ function PlayerScreen({ route }) {
           // Capability.SkipToPrevious
         ],
       });
+      await TrackPlayer.reset();
       const track = {
         url: sermon.link, // Load media from the app bundle
         title: sermon.name,
