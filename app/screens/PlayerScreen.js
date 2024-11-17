@@ -1,198 +1,128 @@
-import {ActivityIndicator, StyleSheet, Text, View, Image, SafeAreaView, Pressable, DeviceEventEmitter } from 'react-native';
-import React, { useState, useRef, useEffect } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { Audio } from 'expo-av';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import forEach from 'lodash/forEach';
-import { index } from 'react-native-cheerio/lib/api/traversing';
-import { convertToObject } from 'typescript';
-import { churchlist } from '../mockdata/churches';
+import React, {useEffect, useState} from 'react';
+import {
+  ActivityIndicator,
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Image,
+  
+} from 'react-native';
+import TrackPlayer, {
+  Capability,
+  usePlaybackState,
+  useProgress,
+} from 'react-native-track-player';
 import Slider from '@react-native-community/slider';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { isLoading } from 'expo-font';
-import { load } from 'react-native-track-player/lib/src/trackPlayer';
-import { all } from 'axios';
+import { Ionicons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import { churchlist } from '../mockdata/churches';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from 'expo-linear-gradient';
 
 
-var myTimer;
-
-const PlayerScreen = ({ route }) => {
+function PlayerScreen({ route }) {
+  const  sermon  = route?.params.info;
+  const churchLogo =  churchlist[sermon.church].logo;
+  const [trackIndex, setTrackIndex] = useState(0);
+  const [isLiked, setisLiked] = useState(null);
+  const loadingStates = ["none", undefined, "loading", "buffering"];
+  const [sliderWidth, setSliderWidth] = useState(0)
   const navigation = useNavigation();
-  const [isLiked, setisLiked] = useState(null)
-  const  sermon  = route?.params;
-  const nameChurch =  sermon.info.church;
-  const [sound, setSound] = useState();
-  const churchLogo =  churchlist[nameChurch].logo;
-  const [isPlaying, setIsPlaying] = useState(false); 
-  const [loading, setLoading] = useState(false) 
-  const [progress, setProgress] = useState(null);
-  const [scrubbing, setScrubbing] = useState(false);
-  const [scrubberWidth, setScrubberWidth] = useState(1)
-  const [scrubPosition, setScrubPosition] = useState(0);
-  const mounted = useRef(false);  
+  const playBackState = usePlaybackState();
+  const progress = useProgress();
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', () => {
-      DeviceEventEmitter.emit("popsong");
-    });
-    return unsubscribe;
-  }, [navigation]);
+  const setupPlayer = async () => {
+    try {
+      await TrackPlayer.updateOptions({
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          // Capability.SkipToNext,
+          // Capability.SkipToPrevious
+        ],
+      });
+      const track = {
+        url: sermon.link, // Load media from the app bundle
+        title: sermon.name,
+        artist: sermon.pastor,
+        artwork: churchlist[sermon.church].logo, // Load artwork from the app bundle
+        duration: 67
+    };
+      await TrackPlayer.add(track);
+    } catch (error) { console.log(error); }
+  };
 
-  const storeLikedSong = async () => {
+  const togglePlayBack = async playBackState => {
+      if ((playBackState.state === "paused") || (playBackState.state === "ready")) {
+        await TrackPlayer.play();
+        await setInHistory()
+      } else {
+        await TrackPlayer.pause();
+      }
+  };
+
+  const nexttrack = async () => {
+      await TrackPlayer.skipToNext();
+  };
+
+  const previoustrack = async () => {
+    if (trackIndex > 0) {
+      await TrackPlayer.skipToPrevious();
+      gettrackdata();
+    };
+  };
+  
+  getSermonIndex = (arr) => 
+    (arr ?? []).findIndex((serm) => 
+      serm.name === sermon.name && serm.date === sermon.date);
+
+  //Like button
+  const toggleLiked = async () => {
     try {
       setisLiked(null);
       const value = await AsyncStorage.getItem('likedSongs');
       let currLiked =JSON.parse(value ?? '[]');
-      currLiked.push(sermon.info)
+      if (!isLiked) {
+        currLiked.push(sermon)
+      } else {
+        currLiked.splice(getSermonIndex(currLiked), 1);
+      }
       await AsyncStorage.setItem('likedSongs', JSON.stringify(currLiked));
-      setisLiked(true);
+      setisLiked(!isLiked); 
     } catch (e) {
         console.log(e);
     }
   };
 
-  getSermonIndex = (arr) => 
-    (arr ?? []).findIndex((serm) => 
-      serm.name === sermon.info.name && serm.date === sermon.info.date);
-
-  const unLikeSong = async () => {
-    try {
-      setisLiked(null);
-      const likedSermons = await AsyncStorage.getItem('likedSongs');
-      var arr =  JSON.parse(likedSermons);
-      arr.splice(getSermonIndex(arr), 1);
-      await AsyncStorage.setItem('likedSongs', JSON.stringify(arr));
-      setisLiked(false);
-    } catch (error) {
-      console.error('Error reading from AsyncStorage:', error);
-    }
-  };
-
-  async function clearAll() {
-    await AsyncStorage.clear();
-  }
-
   const checkIfSermonIsLiked = async () => {
-    try {
-      const likedSermons = await AsyncStorage.getItem('likedSongs');
-      setisLiked(getSermonIndex(JSON.parse(likedSermons)) != -1);
-    } catch (error) {
-      console.error('Error reading from AsyncStorage:', error);
-    }
+    const likedSermons = await AsyncStorage.getItem('likedSongs');
+    setisLiked(getSermonIndex(JSON.parse(likedSermons)) != -1);
   };
 
-  const onHeartPressed = () => {
-    console.log("pressed");
-    isLiked ? unLikeSong() : storeLikedSong();
-  }
-
-  useEffect(() => {
-    mounted.current = true;
-    checkIfSermonIsLiked();
-    setInitSound();
-    return () => {
-      mounted.current = false;
-      console.log("done");
-      clearInterval(myTimer);
-    };
-  }, [])
-  
-  //Play sound
-
-  playbackUpdate = (status) => {
-   // console.log(status);
-  }
-
-  getProgressBarPos = () => {
-    if (progress != null) {
-      return (progress.positionMillis / progress.durationMillis);
-    }
-    return 0;
-  }
-
-  async function setInitSound() {
-    console.log('Loading Sound');
-    setLoading(true);
-    console.log(route?.params?.info?.link);
-    const sound = new Audio.Sound();
-    sound.setOnPlaybackStatusUpdate(playbackUpdate);
-    await sound.loadAsync({uri: route?.params?.info?.link});
-    setSound(sound);
-    startInterval();
-    setLoading(false);
-  }
-
-  startInterval = () => {
-    myTimer = setInterval(async () => {
-      const status = await sound.getStatusAsync();
-      if (mounted.current) {setProgress(status)};
-    }, 500);
-  };
+  const fastForward = (timeTo) => TrackPlayer.seekBy(timeTo);
 
   async function setInHistory() {
     const history = await AsyncStorage.getItem('history');
     var arr =  JSON.parse(history) ?? [];
-    console.log(arr);
-    console.log(getSermonIndex(arr));
     if (getSermonIndex(arr) != -1) {arr.splice(getSermonIndex(arr), 1);}
-    arr.push(sermon.info);
-    console.log(arr);
+    arr.push(sermon);
     await AsyncStorage.setItem('history', JSON.stringify(arr));
   }
 
-  async function handlePlayPause() {
-    console.log("toggle play/pause");
-    setLoading(true);
-    setIsPlaying(!isPlaying);
-    if (!isPlaying) {
-      await sound.playAsync();
-      await setInHistory();
-    } else {
-      await sound.pauseAsync();
-    }
-    setLoading(false);
-  }
-
-  soundPosSet = async(millis) => {
-    try {
-      setLoading(true);
-      await sound.setPositionAsync(millis);
-      const status = await sound.getStatusAsync();
-      setProgress(status);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error seeking:', error);
-    }
-  }
-
-  fastForward = async (seconds) => {
-    if (sound && progress) {
-      const currentPosition = progress.positionMillis;
-      let newPosition = Math.min(Math.max(0, currentPosition + (seconds * 1000)), progress.durationMillis);
-      await soundPosSet(newPosition);
-    }
-  }
+  const getTimeStamp = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor((time % 60));
+    return `${minutes}:${seconds}`;
+  };
 
   useEffect(() => {
-    return sound
-      ? () => {
-          console.log('Unloading Sound');
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
-
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60000);
-    const seconds = Math.floor((time % 60000) / 1000);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
+    setupPlayer();
+    checkIfSermonIsLiked();
+  }, []);
 
   return (
     <LinearGradient colors={['#040306', '#131624']} style={styles.container}>
-      <SafeAreaView>
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() =>  navigation.goBack()}>
@@ -202,7 +132,7 @@ const PlayerScreen = ({ route }) => {
           {isLiked == null ?
             (<ActivityIndicator size="small" color="white" />) :
             (<AntDesign 
-              onPress={onHeartPressed}
+              onPress={toggleLiked}
               name={isLiked ? "heart" : "hearto"} 
               size={24} 
               color={isLiked ? "#1DB954" : "white"} 
@@ -220,47 +150,35 @@ const PlayerScreen = ({ route }) => {
 
         {/* Sermon Info */}
         <View style={styles.infoContainer}>
-          <Text  style={styles.title}>{sermon?.info.name}</Text>
-          <Text style={styles.church}>{sermon?.info.pastor}</Text>
+          <Text  style={styles.title}>{sermon.name}</Text>
+          <Text style={styles.church}>{sermon.pastor}</Text>
         </View>
 
         {/* Scrubber */}
         <View style={styles.scrubberContainer}>
         <View onLayout={(event) => {
             const { width } = event.nativeEvent.layout;
-            setScrubberWidth(width);}}>
+            setSliderWidth(width);}}>
         <Slider
-            style={{ width: scrubberWidth, height: 40 }}
+            style={{ width: sliderWidth, height: 40 }}
+            value={progress.position}
             minimumValue={0}
-            maximumValue={1}
-            value={getProgressBarPos()}
-            minimumTrackTintColor='#1DB954'
-            maximumTrackTintColor='white'
-            onValueChange={value => {
-            }}
-            onSlidingStart={async () => {
-            }}
-            onSlidingComplete={async value => {
-              console.log(value);
-              soundPosSet(value * progress.durationMillis);
-            }}
+            maximumValue={progress.duration}
+            thumbTintColor="#FFD369"
+            minimumTrackTintColor="#FFD369"
+            maximumTrackTintColor="#fff"
+            onSlidingComplete={async value => await TrackPlayer.seekTo(value) }
           />
         </View>
         </View>
         <View
-          style={{
-            marginTop: 12,
-            paddingHorizontal: 20,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
+          style={styles.progressLabelContainer}
         >
-        <Text style={{ color: "white", fontSize: 15, color: "#D3D3D3" }}>
-          {formatTime(progress?.positionMillis ?? 0)}
+        <Text style={styles.progressLabelStyle}>
+          {getTimeStamp(progress.position)}
         </Text>
-        <Text style={{ color: "white", fontSize: 15, color: "#D3D3D3" }}>
-        {formatTime(progress?.durationMillis ?? 0)}
+        <Text style={styles.progressLabelStyle}>
+          {getTimeStamp(progress.duration)}
         </Text>
       </View>
         {/* Player Controls */}
@@ -269,19 +187,21 @@ const PlayerScreen = ({ route }) => {
             <FontAwesome5 name="backward" size={30} color="white" />
           </Pressable>
           <View style={{width: 60, height: 60}}>
-          { loading ? <ActivityIndicator size="large" color="gray" /> :
-            <Pressable onPress={handlePlayPause}>
-              <Ionicons 
-                name={isPlaying ? "pause-circle" : "play-circle"} 
-                size={60} 
-                color="white" 
-              /> 
-            </Pressable>}</View>
+          {loadingStates.includes(playBackState.state)
+           ? <ActivityIndicator size="large" color="gray" /> :
+            <Pressable onPress={() => togglePlayBack(playBackState)}>
+                <Ionicons 
+                  name={((playBackState.state === "paused") || (playBackState.state === "ready")) ? 
+                    "play-circle" : "pause-circle"} 
+                  size={60} 
+                  color="white" 
+                /> 
+              </Pressable>}
+          </View>
           <Pressable onPress={() => fastForward(5)}>
             <FontAwesome5 name="forward" size={30} color="white" />
           </Pressable>
         </View>
-      </SafeAreaView>
     </LinearGradient>
   );
 };
@@ -302,6 +222,18 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  progressLabelContainer: {
+    marginTop: 12,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  progressLabelStyle: { 
+    color: "white", 
+    fontSize: 15, 
+    color: "#D3D3D3" 
   },
   imageContainer: {
     alignItems: 'center',

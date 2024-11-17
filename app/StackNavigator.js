@@ -11,6 +11,9 @@ import SermonsScreen from "./screens/SermonsScreen";
 import PlayerScreen from "./screens/PlayerScreen";
 import HistoryScreen from "./screens/HistoryScreen";
 import EntryPoint from "./screens/EntryPoint";
+import { useSafeAreaInsets} from 'react-native-safe-area-context';
+import { View } from "react-native";
+
 
 const Tab = createBottomTabNavigator();
 
@@ -70,9 +73,12 @@ function BottomTabs() {
 
 const Stack = createNativeStackNavigator();
 function Navigation(){
+    let insets = useSafeAreaInsets();
+
     return (
-        <NavigationContainer independent={true}>
-            <Stack.Navigator>
+      <View style={{flex: 1, marginTop: insets.top, backgroundColor: 'black'}}>
+        <NavigationContainer>
+            <Stack.Navigator screenOptions={{navigationBarHidden: true}}>
                 {/* <Stack.Screen name="Login" component={LoginScreen} options={{headerShown:false}}/> */}
                 <Stack.Screen name="Main" component={EntryPoint} options={{headerShown:false}}/>
                 <Stack.Screen name="Liked" component={LikedSongsScreen} options={{headerShown:false}}/> 
@@ -82,6 +88,7 @@ function Navigation(){
 
             </Stack.Navigator>
         </NavigationContainer>
+      </View>
     )
 }
 
