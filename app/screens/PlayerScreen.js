@@ -26,7 +26,7 @@ function PlayerScreen({ route }) {
   const churchLogo =  churchlist[sermon.church].logo;
   const [trackIndex, setTrackIndex] = useState(0);
   const [isLiked, setisLiked] = useState(null);
-  const loadingStates = ["none", undefined, "loading", "buffering"];
+  const loadingStates = ["none", undefined, "none", "stopped", "loading", "buffering"];
   const [sliderWidth, setSliderWidth] = useState(0)
   const navigation = useNavigation();
   const playBackState = usePlaybackState();
@@ -122,6 +122,7 @@ function PlayerScreen({ route }) {
     checkIfSermonIsLiked();
   }, []);
 
+  console.log(playBackState.state);
   return (
     <LinearGradient colors={['#040306', '#131624']} style={styles.container}>
         {/* Header */}
