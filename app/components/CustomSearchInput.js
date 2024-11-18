@@ -3,9 +3,9 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from "react";
 
 
-const SearchTopBar = ({val, onChange, onNavBack}) => {
+const CustomSearchInput = ({val, onChange, onNavBack}) => {
     const [layout, setLayout] = useState({width: 0,height: 0});
- 
+
 
     return (
         <View 
@@ -44,4 +44,4 @@ const SearchTopBar = ({val, onChange, onNavBack}) => {
     );
 };
 
-export default SearchTopBar;
+export default CustomSearchInput;

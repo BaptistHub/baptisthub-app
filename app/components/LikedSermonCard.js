@@ -6,11 +6,10 @@ import { Player } from "../PlayerContext";
 import { churchlist } from '../mockdata/churches'
 import ContentInfoModal from "./ContentInfoModal";
 
-const LikedSermonCard = ({ info, onPress, logo, isPlaying, onHeartPressed }) => {
+const LikedSermonCard = ({ info, onPress, logo, onHeartPressed, showHeart=true }) => {
   const title = info?.name;
   const preacher = info?.pastor;
   const [openModal, setOpenModal] = useState(false)
-  const { currentTrack, setCurrentTrack } = useContext(Player);
 
  function toggleModal() {
     setOpenModal(!openModal);
@@ -44,9 +43,9 @@ const LikedSermonCard = ({ info, onPress, logo, isPlaying, onHeartPressed }) => 
       </View>
 
       <View style={styles.leftContent}>
-        <Pressable onPress={() => onHeartPressed(info)}>
+        {showHeart ? <Pressable onPress={() => onHeartPressed(info)}>
           <AntDesign name="heart" size={24} color="#1DB954" />
-        </Pressable>
+        </Pressable> : null}
         <Pressable onPress={() => toggleModal()}>
           <Entypo name="dots-three-vertical" size={24} color="#C0C0C0" /> 
         </Pressable>

@@ -1,11 +1,11 @@
-import { Image, TextInput,  FlatList, ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, DeviceEventEmitter } from "react-native";
+import { Image,  FlatList, ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, DeviceEventEmitter } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { debounce } from "lodash";
-import  SearchTopBar from "../components/SearchBar";
 import * as api from '../http/api';
+import TopBarSimple from "../components/TopBarSimple";
 import ChruchSermonCard  from "../components/ChurchSermonCard";
 
 const SermonsScreen = () => {
@@ -55,7 +55,7 @@ const SermonsScreen = () => {
 
   return (
     <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
-      {isSearch ? (<SearchTopBar onChange={handleInputChange} onNavBack={toggleSearch} / >) :  (<View 
+      {isSearch ? (<CustomSearchInput onChange={handleInputChange} onNavBack={toggleSearch} / >) :  (<View 
       style={styles.gradientStyle}>
          <Ionicons
             onPress={() => navigation.goBack()}

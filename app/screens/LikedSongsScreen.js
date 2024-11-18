@@ -20,6 +20,8 @@ import LikedSermonCard from "../components/LikedSermonCard";
 import { Player } from "../PlayerContext";
 import { debounce } from "lodash";
 import { churchlist } from "../mockdata/churches";
+import ClearModal from "../components/ClearModal";
+import TrashButton from "../components/TrashButton";
 
 
 const LikedSongsScreen = () => {
@@ -35,18 +37,12 @@ const LikedSongsScreen = () => {
     "#144272",
   ];
   const navigation = useNavigation();
-  const [backgroundColor, setBackgroundColor] = useState("#0A2647");
-  const { currentTrack, setCurrentTrack } = useContext(Player);
-  const [modalVisible, setModalVisible] = useState(false);
   const [searchedTracks, setSearchedTracks] = useState([]);
   const [input, setInput] = useState("");
   const [likedTracks, setLikedTracks] = useState(null);
+  const [clearLikedModal, setClearLikedModal] = useState(false)
   const value = useRef(0);
-  const [currentSound, setCurrentSound] = useState(null);
-  const [progress, setProgress] = useState(null);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [totalDuration, setTotalDuration] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+
 
   
   
@@ -92,23 +88,39 @@ const LikedSongsScreen = () => {
     debouncedSearch(text);
   };
 
+  async function clearLiked() {
+    await AsyncStorage.setItem('likedSongs', '[]');
+    await getLikedTracks();
+    setSearchedTracks([]);
+    setClearLikedModal(false);
+  }
 
   return (
     <>
+      <ClearModal
+        visible={clearLikedModal}
+        Title={'Clead favorites'} content={'This will delete all content from your favorites library'}
+        buttonPress={clearLiked}
+      ></ClearModal>
       <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
-      <View style={{flexDirection:'row'}}>
-        <Ionicons
-            onPress={() => navigation.goBack()}
-            name="arrow-back"
-            size={24}
-            style={{paddingHorizontal: 16,paddingVertical: 20, marginLeft: 5}}
-            color="white"
-        />
-                <Text
-          style={styles.songCountHeadingText}
-        >
-         Liked sermons
-        </Text>
+      <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
+        <View style={{flexDirection:'row'}}>
+          <Ionicons
+              onPress={() => navigation.goBack()}
+              name="arrow-back"
+              size={24}
+              style={{paddingHorizontal: 16,paddingVertical: 20, marginLeft: 5}}
+              color="white"
+          />
+          <Text
+            style={styles.songCountHeadingText}
+          >
+          Favorites
+          </Text>
+        </View>
+        <TrashButton
+            onPress={() => setClearLikedModal(true)}
+        ></TrashButton>
         </View>
           <Pressable
             style={styles.searchBarContainerStyle}
