@@ -1,5 +1,4 @@
 # Welcome to the baptist hub app
-testing
 ## What is Baptist hub?
 Baptist Hub is a dedicated streaming platform designed to host sermons from respected Independent Fundamentalist Baptist (IFB) preachers. We are currently developing iOS, Android, and web applications using React Native with the Expo framework to provide a seamless experience across devices. Officially launched on October 26, 2024, Baptist Hub aims to be a carefully curated repository for biblically sound content and impactful preaching.
 
