@@ -99,7 +99,8 @@ const LikedSongsScreen = () => {
     <>
       <ClearModal
         visible={clearLikedModal}
-        Title={'Clead favorites'} content={'This will delete all content from your favorites library'}
+        closeModal={() => setClearLikedModal(false)}
+        Title={'Clear favorites'} content={'This will wipe out all content from your favorites library'}
         buttonPress={() =>  clearLiked()}
       ></ClearModal>
       <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
