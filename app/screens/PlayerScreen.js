@@ -9,7 +9,6 @@ import {
   
 } from 'react-native';
 import TrackPlayer, {
-  Capability,
   usePlaybackState,
   useProgress,
 } from 'react-native-track-player';
@@ -34,14 +33,6 @@ function PlayerScreen({ route }) {
 
   const setupPlayer = async () => {
     try {
-      await TrackPlayer.updateOptions({
-        capabilities: [
-          Capability.Play,
-          Capability.Pause,
-          // Capability.SkipToNext,
-          // Capability.SkipToPrevious
-        ],
-      });
       await TrackPlayer.reset();
       const track = {
         url: sermon.link, // Load media from the app bundle

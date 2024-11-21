@@ -70,18 +70,18 @@ const LikedSongsScreen = () => {
   }, []);
 
   useEffect(() => {
-    if(likedTracks?.length > 0){
       handleSearch(input)
-    }
-  },[likedTracks])
+  },[likedTracks, input])
 
 
   const debouncedSearch = debounce(handleSearch, 800);
   function handleSearch(text) {
-    const filteredTracks = likedTracks.filter((item) =>
-      item.name.toLowerCase().includes(text.toLowerCase())
-    );
-    setSearchedTracks(filteredTracks);
+    if (likedTracks != null) {
+      const filteredTracks = likedTracks.filter((item) =>
+        item.name.toLowerCase().includes(text.toLowerCase())
+      );
+      setSearchedTracks(filteredTracks);      
+    }
   }
   const handleInputChange = (text) => {
     setInput(text);
@@ -99,8 +99,7 @@ const LikedSongsScreen = () => {
     <>
       <ClearModal
         visible={clearLikedModal}
-        closeModal={() => setClearLikedModal(false)}
-        Title={'Clear favorites'} content={'This will wipe out all content from your favorites library'}
+        Title={'Clear favorites'} content={'This will delete all content from your favorites library'}
         buttonPress={() =>  clearLiked()}
       ></ClearModal>
       <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>

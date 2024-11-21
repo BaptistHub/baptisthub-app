@@ -1,0 +1,10 @@
+1.) Activity indicator always on at bottom of Flatlis
+
+      await TrackPlayer.updateOptions({
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          // Capability.SkipToNext,
+          // Capability.SkipToPrevious
+        ],
+      });

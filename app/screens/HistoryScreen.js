@@ -16,7 +16,7 @@ const HistoryScreen = () => {
   const route = useRoute();
   const church = route?.params?.church;
   const churchInfo = route?.params?.info;
-  const [tracks, setTracks] = useState([]);
+  const [tracks, setTracks] = useState(null);
   const [layout, setLayout] = useState({width: 0,height: 0});
   const [historyModal, setHistoryModal] = useState(false)
   const [searchedTracks, setSearchedTracks] = useState([]);
@@ -38,18 +38,18 @@ const HistoryScreen = () => {
   }, []);
 
   useEffect(() => {
-    if(tracks.length > 0){
       handleSearch(input)
-    }
-  },[tracks])
+  },[tracks, input])
 
 
   const debouncedSearch = debounce(handleSearch, 800);
   function handleSearch(text) {
-    const filteredTracks = tracks.filter((item) =>
-      item.name.toLowerCase().includes(text.toLowerCase())
-    );
-    setSearchedTracks(filteredTracks);
+    if (tracks != null) {
+      const filteredTracks = tracks.filter((item) =>
+        item.name.toLowerCase().includes(text.toLowerCase())
+      );
+      setSearchedTracks(filteredTracks); 
+    }
   }
   const handleInputChange = (text) => {
     setInput(text);
@@ -80,7 +80,8 @@ const HistoryScreen = () => {
           ></TrashButton>
         }
       ></TopBarSimple>   
-        {searchedTracks.length == 0 ? <View>
+        {tracks == null ? <ActivityIndicator style={{marginTop: 60}} size="large" color="gray" /> :
+         <>{searchedTracks.length == 0 ? <View>
           <Text style={styles.contentNotFound}>No content found</Text>
         </View> : <FlatList
           showsVerticalScrollIndicator={false}
@@ -95,7 +96,7 @@ const HistoryScreen = () => {
               logo={churchlist[item?.church]?.logo}
             ></HistorySermonCard>)
           )}
-        />}
+        />}</>}
         <View>
       </View>
     </LinearGradient>

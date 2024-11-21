@@ -76,7 +76,7 @@ const SermonsScreen = () => {
              (<View style={{ flexDirection: 'column', padding: 12}}>
                 <View style={{ flex: 1, alignItems: "center" }}>
                   <Image
-                    style={{ width: 200, height: 200 }}
+                    style={{ width: 200, height: 200, borderRadius: 7 }}
                     source={{ uri: logo }}
                   />
                 </View>
