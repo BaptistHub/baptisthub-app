@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { debounce } from "lodash";
 import * as api from '../http/api';
 import TopBarSimple from "../components/TopBarSimple";
+import CustomSearchInput from "../components/CustomSearchInput";
 import ChruchSermonCard  from "../components/ChurchSermonCard";
 
 const SermonsScreen = () => {
