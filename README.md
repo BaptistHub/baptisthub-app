@@ -8,7 +8,7 @@ At present, the app features audio content exclusively from Faithful Word, Verit
 You can find past versions and their changes in this [document](changes.md)
 
 ## APK download
-Download the latest baptist hub APK build [here (V1.1)](https://drive.google.com/drive/folders/1ySam8S_PlfngAY5-MRNlu-fNp7b4nvO2?usp=sharing)
+Download the latest baptist hub APK build [here (V1.1)](https://drive.google.com/drive/folders/1ySam8S_PlfngAY5-MRNlu-fNp7b4nvO2?usp=drive_link)
 
 # Contributing to the project
 The app is built using react native and Expo, learn more about Expo and how to download it -> [here](https://docs.expo.dev/).
