@@ -7,6 +7,9 @@ At present, the app features audio content exclusively from Love Baptist, Corner
 ### Versions and changes
 You can find past versions and their changes in this [document](changes.md)
 
+## Screenshots
+You can find the screenshots in the screenshots folder in the root directory
+
 ## APK download
 Download the latest baptist hub APK build [here (V1.1)](https://drive.google.com/drive/folders/1ySam8S_PlfngAY5-MRNlu-fNp7b4nvO2?usp=drive_link)
 
