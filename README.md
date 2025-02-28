@@ -7,7 +7,7 @@ At present, the app features audio content exclusively from Love Baptist, Corner
 ### Versions and changes
 You can find past versions and their changes in this [document](changes.md)
 
-## Screenshots
+### Screenshots
 You can find the screenshots in the screenshots folder in the root directory
 
 ## APK download
