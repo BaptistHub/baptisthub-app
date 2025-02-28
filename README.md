@@ -11,7 +11,7 @@ You can find past versions and their changes in this [document](changes.md)
 You can find the screenshots in the screenshots folder in the root directory
 
 ## APK download
-Download the latest baptist hub APK build [here (V1.1)](https://drive.google.com/drive/folders/1ySam8S_PlfngAY5-MRNlu-fNp7b4nvO2?usp=drive_link)
+Download the latest baptist hub APK build [here (V1.1)](https://drive.google.com/file/d/1Xp-poAN_78s4GSLJQppUiq8ko2eK5gt9/view?usp=sharing) , select the universal.apk file
 
 # Contributing to the project
 The app is built using react native and Expo, learn more about Expo and how to download it -> [here](https://docs.expo.dev/).
